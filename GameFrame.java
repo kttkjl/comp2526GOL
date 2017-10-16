@@ -28,6 +28,17 @@ public class GameFrame extends JFrame {
     }
     
     /**
+     * repaints the world.
+     */
+    public void repaint() {
+        for (int row = 0; row < world.getRowCount(); row++) {
+            for (int col = 0; col < world.getColumnCount(); col++) {
+                add(world.getCellAt(row, col));
+            }
+        }
+    }
+    
+    /**
      * Calls world.takeTurn(), let it update, repaint the Frame.
      */
     public void takeTurn() {

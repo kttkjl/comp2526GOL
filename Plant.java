@@ -1,15 +1,27 @@
 package ca.bcit.comp2526.a2a;
 
-public class Plant extends Cell{
-
-    public Plant(World world, int row, int column) {
-        super(world, row, column);
-        // TODO Auto-generated constructor stub
-    }
-
+public class Plant extends Entity{
+    public Cell location;
     /**
-     * 
+     * Creates a Plant Object.
+     * @param location
      */
-    private static final long serialVersionUID = 1L;
+    public Plant(Cell location) {
+        this.location = location;
+    }
+    /**
+     * Sets the background to Green.
+     */
+    public void init() {
+        
+    }
+    
+    /**
+     * Puts the Plant on the specified Cell.
+     * @param location
+     */
+    public void setCell(Cell location) {
+        
+    }
 
 }

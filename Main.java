@@ -27,6 +27,7 @@ public final class Main {
         frame.init();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
+        
     }
 
     private static void position(final GameFrame frame) {

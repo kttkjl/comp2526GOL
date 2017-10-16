@@ -1,63 +1,127 @@
 package ca.bcit.comp2526.a2a;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Point;
 
-public class Cell extends javax.swing.JPanel{
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 1L;
-    private Point point;
-    private CellType type;
+import javax.swing.JPanel;
+
+public class Cell extends JPanel{
+
+    private final World world;
+    private final LocationPoint locationPoint;
+    protected Entity entity;
+    protected Herbivore herbivore;
+    protected Plant plant;
     
     /**
      * Creates a Cell in a World Object, at 
-     * @param world
+     * @param world     the world Object this cell is stored in.
      * @param row       Row (y).
      * @param column    Column (x).
      */
     public Cell(World world, int row, int column) {
-        this.point = new Point(column, row);
-        if (Math.random() > 0.66) {
-            this.type = CellType.EMPTY;
-        } else if (Math.random() < 0.33) {
-            this.type = CellType.HERBIVORE;
-        } else {
-            this.type = CellType.PLANT;
-        }
-        init();
+        this.world = world;
+        this.locationPoint = new LocationPoint(column, row);
     }
     
     /**
-     * Sets up the layout.
+     * Sets up the cell to have randomly a plant or herbivore.
      */
     public void init() {
-        switch (this.type) {
-        case EMPTY:
-            setBackground(Color.WHITE);
-            break;
-        case HERBIVORE:
-            setBackground(Color.YELLOW);
-            break;
-        case PLANT:
-            setBackground(Color.GREEN);
-            break;
-        default:
-            setBackground(Color.WHITE);
-            break;
+        int rn = RandomGenerator.nextNumber(100);
+        if (rn >= 80) {
+            this.herbivore = new Herbivore(this);
+        } else if (rn <= 30) {
+            this.plant = new Plant(this);
         }
     }
     
     /**
-     * Returns the location of the Cell on the World
-     * @override java.awt.Component.getLocation
-     * @return
+     * @return the LocationPoint object of this Cell.
      */
-    public Point getLocation() {
-        return this.point;
+    public LocationPoint getLocationPoint() {
+        return this.locationPoint;
     }
     
-
+    /**
+     * Grabs all the cells within a radius.
+     * @return the cells around a particular cell.
+     */
+    public Cell[] getAdjacentCells(int radius) {
+        int grabbedIndex = 0;
+        int totalAdjCells = (radius * 2 + 1) * (radius * 2 + 1) - 1;
+        Cell[] grabbedCells = new Cell[totalAdjCells];
+        int currX = this.locationPoint.getX();
+        int currY = this.locationPoint.getY();
+        
+        for(int i = currX - radius; i < currX + radius; i++) {
+            if (i < 0) {continue;}
+            for (int j = currY - radius; j < currY + radius; i++) {
+                if (j < 0) {continue;}
+                if (i == currX && j == currY) {continue;}
+                grabbedCells[grabbedIndex] = world.getCellAt(i, j);
+                grabbedIndex++;
+            }
+        }
+        return grabbedCells;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    /**
+     * Inserts an Herbivore object
+     * @param hb   into the Cell
+     */
+    public void insertHerbivore(Herbivore hb) {
+        this.herbivore = hb;
+    }
+    /**
+     * Inserts a Plant object 
+     * @param pt    into the cell
+     */
+    public void insertPlant(Plant pt) {
+        this.plant = pt;
+    }
+    /**
+     * @return
+     *      the plant object from this Cell.
+     */
+    public Plant getPlant() {
+        return this.plant;
+    }
+    /**
+     * @return 
+     *      the herbivore object from this Cell.
+     */
+    public Herbivore getHerbivore() {
+        return this.herbivore;
+    }
+    /**
+     * Removes this Cell's reference to a Plant object.
+     */
+    public void removePlant() {
+        this.plant = null;
+    }
+    /**
+     * Removes this Cell's reference to a Herbivore object.
+     */
+    public void removeHerbivore() {
+        this.herbivore = null;
+    }
+    
     
 }
