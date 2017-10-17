@@ -51,11 +51,11 @@ public class World {
      *      Eat plant if plant cell.
      */
     public void takeTurn() {
-        
         for (int row = 0; row < this.ROWS; row++) {
             for (int col = 0; col < this.COLUMNS; col++) {
                 Cell workingCell = getCellAt(col, row);
-                workingCell.getAdjacentCells(1);
+                //Will call to get adjacent cells, then filter 
+                checkSeedCells(workingCell.getAdjacentCells(1));
                 
             }
         }

@@ -1,14 +1,16 @@
 package ca.bcit.comp2526.a2a;
 
+import java.awt.Graphics;
+import java.util.ArrayList;
+
 import javax.swing.JPanel;
 
-public class Cell extends JPanel{
-
+public class Cell extends JPanel {
+    private final int ADJCELLSx1 = 8;
     private final World world;
     private final LocationPoint locationPoint;
-    protected Entity entity;
-    protected Herbivore herbivore;
-    protected Plant plant;
+    protected ArrayList<Entity> entities = new ArrayList<Entity>();
+
     
     /**
      * Creates a Cell in a World Object, at 
@@ -27,9 +29,9 @@ public class Cell extends JPanel{
     public void init() {
         int rn = RandomGenerator.nextNumber(100);
         if (rn >= 80) {
-            this.herbivore = new Herbivore(this);
+            entities.add(new Herbivore(this));
         } else if (rn <= 30) {
-            this.plant = new Plant(this);
+            entities.add(new Plant(this));
         }
     }
     
@@ -63,65 +65,112 @@ public class Cell extends JPanel{
         return grabbedCells;
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     /**
-     * Inserts an Herbivore object
-     * @param hb   into the Cell
+     * Finds if adjacent cells are valid for seeding, given
+     * @param cells
      */
-    public void insertHerbivore(Herbivore hb) {
-        this.herbivore = hb;
+    public void checkSeedCells(Cell[] cells) {
+        Cell[] validcells = new Cell[cells.length];
+        int adjEmpty = 0;
+        int adjPlants = 0;
+        int validCellIndex = 0;
+        for(Cell cell : cells) {
+            if((cell.getPlant() == null) && (cell.getHerbivore() == null)) {
+                adjEmpty++;
+                validcells[validCellIndex] = cell;
+                validCellIndex++;
+            } else if (cell.getPlant() != null) {
+                adjPlants++;
+            }
+        }
+        //If the checked cell is valid, call seedCell
+        if (adjEmpty >= 3 && adjPlants >= 2) {
+            seedCells(validcells, validCellIndex + 1);
+        }
     }
+    
     /**
-     * Inserts a Plant object 
-     * @param pt    into the cell
+     * Seeds in random cell, with given array of valid cells and array length
+     * @param cells .
+     * @param length .
      */
-    public void insertPlant(Plant pt) {
-        this.plant = pt;
+    private void seedCells(Cell[] cells, int length) {
+        //Grabs the cell at random index of given valid cells
+        try {
+            if (length != 0) {
+                Cell plantingCell = cells[RandomGenerator.nextNumber(length)];
+                plantingCell.insertEntity(new Plant(plantingCell));
+            }
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println("Did not return any valid cells" + e.getMessage());
+        }
     }
+    
+    
+    public void paintComponent(Graphics g) {
+        
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     /**
+     * Inserts an Entity object
+     * @param en   into the Cell
+     */
+    public void insertEntity(Entity en) {
+        this.entities.add(en);
+    }
+
+    /**
+     * Goes through the entities in the Cell and
      * @return
      *      the plant object from this Cell.
      */
     public Plant getPlant() {
-        return this.plant;
+        Plant p = null;
+        for (Entity e : entities)
+            if(e.getClass().getName().equals("Plant"))
+                p = (Plant) e;
+        return p;
     }
     /**
      * @return 
      *      the herbivore object from this Cell.
      */
     public Herbivore getHerbivore() {
-        return this.herbivore;
+        Herbivore h = null;
+        for (Entity e : entities)
+            if(e.getClass().getName().equals("Herbivore"))
+                h = (Herbivore) e;
+        return h;
     }
+    
+    
+    
     /**
      * Removes this Cell's reference to a Plant object.
      */
-    public void removePlant() {
-        this.plant = null;
-    }
+//    public void removePlant() {
+//        this.plant = null;
+//    }
     /**
      * Removes this Cell's reference to a Herbivore object.
      */
-    public void removeHerbivore() {
-        this.herbivore = null;
-    }
+//    public void removeHerbivore() {
+//        this.herbivore = null;
+//    }
     
     
 }

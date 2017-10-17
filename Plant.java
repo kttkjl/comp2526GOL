@@ -1,19 +1,21 @@
 package ca.bcit.comp2526.a2a;
 
+import java.awt.Color;
+
 public class Plant extends Entity{
-    public Cell location;
     /**
      * Creates a Plant Object.
      * @param location
      */
-    public Plant(Cell location) {
-        this.location = location;
+    public Plant(Cell cell) {
+        super(cell);
     }
     /**
      * Sets the background to Green.
      */
     public void init() {
-        
+        super.setColor(Color.GREEN);
+        super.setEntity(EntityType.PLANT);
     }
     
     /**
