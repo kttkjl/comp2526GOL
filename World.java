@@ -67,10 +67,12 @@ public class World {
             for (int col = 0; col < this.COLUMNS; col++) {
                 //Grabs each Cell, put as workingCell.
                 Cell workingCell = getCellAt(col, row);  
-                //Seed cells:Check the current working cell for seed-able cells
-                System.out.println("checking for seedcells");
-                workingCell.checkForSeedCells(workingCell.getAdjacentCells(1));
-                System.out.println("finished checking for seedcells");
+                if(workingCell.getPlant() != null) {
+                    //Seed cells:Check the current working cell for seed-able cells
+                    System.out.println("checking for seedcells");
+                    workingCell.checkForSeedCells(workingCell.getAdjacentCells(1));
+                    System.out.println("finished checking for seedcells");
+                }
             }
         }
       //Move Herbivores
