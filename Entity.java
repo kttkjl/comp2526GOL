@@ -1,28 +1,21 @@
 package ca.bcit.comp2526.a2a;
 
-import java.awt.Color;
-
 public class Entity {
     private Cell location;
-    private Color color;
     //Add more as needed.
-    private EntityType et;
+    private EntityType entityType;
     
     public Entity(Cell cell) {
         super();
         this.location = cell;
     }
     
-    public void init() {
-        
-    }
+//    public  getEntityLocation() {
+//        return this.location;
+//    }
     
     public void setEntity(EntityType en) {
-        this.et = en;
-    }
-    
-    public void setColor(Color c) {
-        this.color = c;
+        this.entityType = en;
     }
     
     /**
@@ -31,9 +24,30 @@ public class Entity {
      * @param name      name.
      * @return
      */
-    public boolean containsEntity(Entity[] en, String name) {
-        
-        return true;
+//    public boolean containsEntity(Entity[] en, String name) {
+//        
+//        return true;
+//    }
+
+    /**
+     * @return the entityType
+     */
+    public EntityType getEntityType() {
+        return entityType;
     }
     
+    /**
+     * @return where this entity is located, in a Cell object
+     */
+    public Cell getEntityCell() {
+        return location;
+    }
+    
+    /**
+     * updates the current Cell to a 
+     * @param newlocation Cell
+     */
+    public void updateLocation(Cell newlocation) {
+        this.location = newlocation;
+    }
 }

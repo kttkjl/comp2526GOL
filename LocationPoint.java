@@ -1,21 +1,21 @@
 package ca.bcit.comp2526.a2a;
 
 public class LocationPoint {
-    private int x;
-    private int y;
+    private int row;
+    private int col;
     
-    public LocationPoint(int x, int y) {
-        this.x = x;
-        this.y = y;
+    public LocationPoint(int row, int col) {
+        this.row = row;
+        this.col = col;
     }
-    public void setPoint(int x, int y) {
-        this.x = x;
-        this.y = y;
+    public void setPoint(int row, int col) {
+        this.row = row;
+        this.col = col;
     }
-    public int getX() {
-        return this.x;
+    public int getRow() {
+        return this.row;
     }
-    public int getY() {
-        return this.y;
+    public int getCol() {
+        return this.col;
     }
 }

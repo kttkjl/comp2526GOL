@@ -27,16 +27,6 @@ public class GameFrame extends JFrame {
         addMouseListener(new TurnListener(this));
     }
     
-    /**
-     * repaints the world.
-     */
-    public void repaint() {
-        for (int row = 0; row < world.getRowCount(); row++) {
-            for (int col = 0; col < world.getColumnCount(); col++) {
-                add(world.getCellAt(row, col));
-            }
-        }
-    }
     
     /**
      * Calls world.takeTurn(), let it update, repaint the Frame.
@@ -45,7 +35,11 @@ public class GameFrame extends JFrame {
         System.out.println("before world turn");
         world.takeTurn();
         System.out.println("after world turned");
-        repaint();
+        for(Cell cells[]: world.getCells()) {
+            for(Cell cell: cells) {
+                cell.repaint();
+            }
+        }
         System.out.println("repainted");
     }
 }
