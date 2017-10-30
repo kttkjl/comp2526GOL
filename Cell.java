@@ -11,10 +11,13 @@ public class Cell extends JPanel {
      */
     private static final long serialVersionUID = 6784752020553593522L;
     private final World world;
+    private final int UPPER_LIM = 100;
+    private final int HERB_RATIO = 80;
+    private final int PLANT_RATIO = 50;
     private final LocationPoint locationPoint;
+    private boolean alreadySeeded = false;
     protected ArrayList<Entity> entities = new ArrayList<Entity>();
-    private boolean plantAlreadySeeded = false;
-    private boolean herbivoreAlreadyMoved = false;
+//    private boolean herbivoreAlreadyMoved = false;
     
     /**
      * Creates a Cell in a World Object, at 
@@ -32,41 +35,26 @@ public class Cell extends JPanel {
      * Sets up the cell to have randomly a plant or herbivore.
      */
     public void init() {
-        int rn = RandomGenerator.nextNumber(100);
-        int worldHerbivoreIndex = 0;
-        if (rn >= 80) {
+        int rn = RandomGenerator.nextNumber(UPPER_LIM);
+        if (rn >= HERB_RATIO) {
             Herbivore newHerbivore = new Herbivore(this);
             newHerbivore.init();
             entities.add(newHerbivore);
+
             /*Insert into world's array of Herbivore locations 
             and updates worldHerbivoreindex;*/
-            world.insertIntocellsContHerbivore(worldHerbivoreIndex, this);
-            worldHerbivoreIndex++;
-        } else if (rn <= 30) {
+            
+        } else if (rn >= PLANT_RATIO) {
             Plant newPlant = new Plant(this);
             newPlant.init();
             entities.add(newPlant);
         }
-//        repaint();
+
     }
-    
-    /**
-     * updates the color of the Cell, according to its Entities.
-     */
-//    private void updateColor() {
-//        if(isEmpty(entities)) {
-//            setBackground(Color.WHITE);
-//        } else if (this.getHerbivore() != null){
-//            setBackground(Color.YELLOW);
-//        } else {
-//            setBackground(Color.GREEN);
-//        }
-//        repaint();
-//    }
     
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if(isEmpty(entities)) {
+        if(entityEmpty(entities)) {
             g.setColor(Color.WHITE);
         } else if (this.getHerbivore() != null){
             g.setColor(Color.YELLOW);
@@ -114,62 +102,66 @@ public class Cell extends JPanel {
      * Finds if adjacent cells are valid for seeding, given an array of
      * @param cells
      */
-    public void checkForSeedCells(Cell[] cells) {
+    public Cell[] getSeedCells(Cell[] cells) {
         Cell[] validcells = new Cell[cells.length];
         int adjEmpty = 0;
         int adjPlants = 0;
         int validCellIndex = 0;
-        System.out.println("chkForSeedCells method variables set");
+        System.out.println("chkForSeedCells variables set");
+        //Goes through all the adjacent cells 
         for(Cell cell : cells) {
-            if (cell == null) {break;}
+            if (cell == null) {
+                break;
+            }
             //If it's an empty cell
-            if(isEmpty(cell.entities)) {
+            if(entityEmpty(cell.entities)) {
                 adjEmpty++;
-                validcells[validCellIndex] = cell;
-                validCellIndex++;
+                if (!cell.alreadySeeded) {
+                    //ONLY ADD to valid seed spots IF this cell isn't seeded
+                    validcells[validCellIndex] = cell;
+                    validCellIndex++;
+                }
             } else if (cell.getPlant() != null) {
                 adjPlants++;
             }
         }
         System.out.println("finished checking valid seed cells");
-        //If the checked cell is valid, calls seedCell for the valid cells for seeding
-        if (adjEmpty >= 3 && adjPlants >= 2) {
-            System.out.println("calling seedcells");
-            // - 1 because ++'ed index at the very end
-            seedCells(validcells, validCellIndex - 1);
+        //If the checked cell is valid, return a random cell to be seeded
+        if (adjEmpty >= 3 && adjPlants >= 2 && validCellIndex > 0) {
+            System.out.println("Found cell available to be seeded");
+            System.out.println("Returning valid cells to be seeded next turn");
+            //trims this
+            Cell[] validcells2 = new Cell[validCellIndex];
+            System.arraycopy(validcells, 0, validcells2, 0, validCellIndex);
+            System.out.println("validcells2 length " + validcells2.length);
+            return validcells2;
         }
+        return null;
     }
     
     /**
-     * Seeds in random cell, with given array of valid cells and array length
+     * Seeds in given cell, resets alreadySeeded Status
      * @param cells .
      * @param length .
      */
-    private void seedCells(Cell[] cells, int length) {
+    public void seedCell() {
         //Grabs the cell at random index of given valid cells
-        System.out.println("inside seedCells");
-        try {
-            if (length > 0) {
-                Cell plantingCell = cells[RandomGenerator.nextNumber(length)];
-                Plant p = new Plant(plantingCell);
-                p.init();
-                plantingCell.insertEntity(p);
-                System.out.println("repainting" + plantingCell.getLocation());
-                repaint();
-            }
-        } catch (IndexOutOfBoundsException e) {
-            System.out.println("Did not return any valid cells" + e.getMessage());
-        }
-        System.out.println("finished seedCells");
+        System.out.println("inside seedCell");
+        Plant p = new Plant(this);
+        p.init();
+        this.insertEntity(p);
+        this.alreadySeeded = false;
     }
     
     /**
      * Checks if the ArrayList of Entity 
      * @param ar
      */
-    private boolean isEmpty(ArrayList<Entity> ar) {
+    private boolean entityEmpty(ArrayList<Entity> ar) {
         for (Entity en : ar) {
-            if(en != null) {return false;}
+            if(en != null) {
+                return false;
+            }
         }
         return true;
     }
@@ -226,7 +218,7 @@ public class Cell extends JPanel {
     private void removeEntity(EntityType et) {
         for (Entity e : entities) {
             if(e.getEntityType() == et)
-                e = null;
+                entities.remove(e);
         }
     }
     /**
@@ -243,6 +235,12 @@ public class Cell extends JPanel {
     }
     
     /**
+     * Sets the Cell's seeded status.
+     */
+    public void setSeededStatus(boolean b) {
+        this.alreadySeeded = b;
+    }
+    /**
      * Moves the Entity
      * @param e     to a new Cell
      * @param c
@@ -250,4 +248,6 @@ public class Cell extends JPanel {
     public void moveEntity(Entity e, Cell c) {
         
     }
+    
+    
 }

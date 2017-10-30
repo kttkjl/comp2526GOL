@@ -10,10 +10,6 @@ public class Entity {
         this.location = cell;
     }
     
-//    public  getEntityLocation() {
-//        return this.location;
-//    }
-    
     public void setEntity(EntityType en) {
         this.entityType = en;
     }

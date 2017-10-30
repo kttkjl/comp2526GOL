@@ -1,6 +1,7 @@
 package ca.bcit.comp2526.a2a;
 
 public class Plant extends Entity{
+    private boolean justSeeded;
     
     /**
      * Creates a Plant Object.
@@ -12,10 +13,15 @@ public class Plant extends Entity{
     /**
      * Sets the background to Green.
      */
-    public void init() {
-        super.setEntity(EntityType.PLANT);
+    public Plant init() {
+        setEntity(EntityType.PLANT);
+        this.justSeeded = true;
+        return this;
     }
     
+    public boolean justSeeded() {
+        return this.justSeeded;
+    }
     /**
      * Puts the Plant on the specified Cell.
      * @param location
