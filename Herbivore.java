@@ -61,24 +61,13 @@ public class Herbivore extends Entity{
     public static void removeFromAllHerbs(Herbivore h) {
         allH.remove(h);
     }
-    
-    /**
-    * Moves the Entity
-    * @param e     to a new Cell
-    * @param c
-    */
-   private void move(Cell oldC, Cell newC) {
-       oldC.removeHerbivore();
-       this.setLocation(newC);
-       newC.insertEntity(this);
-   }
    
    public void setMoved(boolean b) {
        this.moved = b;
    }
    
    /**
-    * Given adjacent cells
+    * Moves the herbivore, eats plant if exists.
     */
    public void moveHerbivore() {
        //Grabbing adj cells, put in 
@@ -134,26 +123,22 @@ public class Herbivore extends Entity{
        }
        return selectPriority(pCells, pInd, otherCells, otherInd);
    }
-   
    /**
-    * Helper method for getPriorityCell.
-    * @param pCells
-    * @param pInd
-    * @param otherCells
-    * @param oInd
+    * Selects a Cell from 2 lists: priority, and non-priority.
+    * Selects priority Cells if array not null
+    * @param pCells         array of prioritized Cells
+    * @param pInd           number of elements in pCells
+    * @param otherCells     array of non-priority Cells
+    * @param oInd           number of elements in non-p Cells
     * @return
     */
    private Cell selectPriority(Cell[] pCells, int pInd, 
            Cell[] otherCells, int oInd) {
        Cell priority = null;
        if(pInd > 0) {
-           
                priority = pCells[RandomGenerator.nextNumber(pInd)];
-           
        } else if (oInd > 0){
-           
                priority = otherCells[RandomGenerator.nextNumber(oInd)];
-           
        }
        return priority;
    }

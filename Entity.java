@@ -43,5 +43,16 @@ public class Entity {
     public void setLocation(Cell c) {
         location = c;
     }
+    
+    /**
+    * Moves the Entity
+    * @param e     to a new Cell
+    * @param c
+    */
+   protected void move(Cell oldC, Cell newC) {
+       oldC.removeHerbivore();
+       this.setLocation(newC);
+       newC.insertEntity(this);
+   }
 
 }
