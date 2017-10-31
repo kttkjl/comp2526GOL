@@ -3,6 +3,8 @@ package ca.bcit.comp2526.a2a;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
+import java.util.Iterator;
+
 import javax.swing.JPanel;
 
 public class Cell extends JPanel {
@@ -145,7 +147,6 @@ public class Cell extends JPanel {
      * @param length .
      */
     public void seedCell() {
-        //Grabs the cell at random index of given valid cells
         System.out.println("inside seedCell");
         Plant p = new Plant(this);
         p.init();
@@ -179,7 +180,7 @@ public class Cell extends JPanel {
      * @param et
      * @return null if Entity does not exist.
      */
-    private Entity getEntity(EntityType et) {
+    protected Entity getEntity(EntityType et) {
         Entity returnEntity = null;
         for (Entity e : entities) {
             if(e.getEntityType() == et)
@@ -216,10 +217,18 @@ public class Cell extends JPanel {
      * @param et
      */
     private void removeEntity(EntityType et) {
-        for (Entity e : entities) {
-            if(e.getEntityType() == et)
-                entities.remove(e);
+        for (Iterator<Entity> iterator = entities.iterator(); iterator.hasNext();) {
+            Entity en = iterator.next();
+            if (en.getEntityType() == et) {
+                // Remove the current element from the iterator and the list.
+                iterator.remove();
+            }
         }
+//        
+//        for (Entity e : entities) {
+//            if(e.getEntityType() == et)
+//                entities.remove(e);
+//        }
     }
     /**
      * Removes this Cell's Plant Entity reference.
@@ -240,14 +249,5 @@ public class Cell extends JPanel {
     public void setSeededStatus(boolean b) {
         this.alreadySeeded = b;
     }
-    /**
-     * Moves the Entity
-     * @param e     to a new Cell
-     * @param c
-     */
-    public void moveEntity(Entity e, Cell c) {
-        
-    }
-    
     
 }

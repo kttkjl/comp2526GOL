@@ -1,12 +1,8 @@
 package ca.bcit.comp2526.a2a;
 
-import java.util.ArrayList;
-
 public class World {
     private Cell[][] cells;
     //Index that contains all cells with active herbivores in the world.
-    private ArrayList<Cell> cellsContHerbivore;
-    private ArrayList<Cell> newlySeededCells;
     protected final int ROWS;
     protected final int COLUMNS;
     /**
@@ -22,7 +18,6 @@ public class World {
         this.ROWS = rows;
         this.COLUMNS = cols;
         this.cells = new Cell[rows][cols];
-        this.cellsContHerbivore = new ArrayList<Cell>(10);
     }
     
     /**
@@ -62,15 +57,16 @@ public class World {
     public void takeTurn() {
         //Removes dead Herbivores from this World object.
         System.out.println("removing dead herbivores");
-        //removeDeadHerbivores();
+        removeDeadHerbivores();
         System.out.println("finished moving dead herbs");
         
         //Seeding Phase
         seedCells(getCellsToSeed());
+        System.out.println("Finished seeding cells");
         
-      //Move Herbivores
+        //Move Herbivores
         System.out.println("moving herbivores");
-//        moveHerbivores();
+        moveHerbivores();
         //Eat Plant if exists
     }
     
@@ -84,6 +80,7 @@ public class World {
 //            
 //        }
 //    }
+    
     /**
      * gets an Array of Cells to be Seeded.
      * @return Array of Cells to be Seeded.
@@ -103,7 +100,7 @@ public class World {
                             workingCell.getAdjacentCells(1));
                     if (seedables != null) {
                         Cell newCell = seedables
-                                [(int) (Math.random() * (seedables.length - 1))];
+                                [RandomGenerator.nextNumber(seedables.length)];
                         newCell.setSeededStatus(true);
                         retCells[retIndex] = newCell;
                         retIndex++;
@@ -132,14 +129,23 @@ public class World {
      * updates the world's cellsContHerbivore
      */
     public void removeDeadHerbivores() {
-        for (Cell c : cellsContHerbivore) {
-            if(c.getHerbivore().getHp() <= 0) {
+        Herbivore[] herbs = Herbivore.getAllHerbivores();
+        for (Herbivore h: herbs) {
+            if(h.getHp() <= 0) {
                 //removes the Cell's ref to the Herbivore object
-                c.removeHerbivore();
-                //removes the cell from world's Herbivore Index reference
-                cellsContHerbivore.remove(c);
-                cellsContHerbivore.trimToSize();
+                h.getEntityCell().removeHerbivore();
+                //sets this herbivores's Cell location to null
+                h.setLocation(null);
+                //remove this herbivore from the static all herbivore list
+                Herbivore.removeFromAllHerbs(h);
             }
+        }
+    }
+    
+    public void moveHerbivores() {
+        Herbivore[] herbs = Herbivore.getAllHerbivores();
+        for (Herbivore h : herbs) {
+            h.moveHerbivore();
         }
     }
     

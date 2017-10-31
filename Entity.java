@@ -5,25 +5,22 @@ public class Entity {
     //Add more as needed.
     private EntityType entityType;
     
+    /**
+     * Constructor.
+     * @param cell - the cell this entity is created in.
+     */
     public Entity(Cell cell) {
         super();
         this.location = cell;
     }
     
+    /**
+     * Sets the entityType of this Entity.
+     * @param en
+     */
     public void setEntity(EntityType en) {
         this.entityType = en;
     }
-    
-    /**
-     * Checks if given entity array
-     * @param en        contains an object with the
-     * @param name      name.
-     * @return
-     */
-//    public boolean containsEntity(Entity[] en, String name) {
-//        
-//        return true;
-//    }
 
     /**
      * @return the entityType
@@ -40,10 +37,11 @@ public class Entity {
     }
     
     /**
-     * updates the current Cell to a 
-     * @param newlocation Cell
+     * Sets the cell this entity is located in.
+     * @param c
      */
-    public void updateLocation(Cell newlocation) {
-        this.location = newlocation;
+    public void setLocation(Cell c) {
+        location = c;
     }
+
 }

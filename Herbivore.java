@@ -1,9 +1,13 @@
 package ca.bcit.comp2526.a2a;
 
+import java.util.ArrayList;
+
 public class Herbivore extends Entity{
-    private static int totalNum = 0;
+    private static ArrayList<Herbivore> allH = new ArrayList<Herbivore>();
+    private static int totalNum = allH.size();
     private final int MAXHP = 10;
     private int hitPoint;
+    private boolean moved;
     
     public Herbivore(Cell cell) {
         super(cell);
@@ -14,8 +18,9 @@ public class Herbivore extends Entity{
      */
     public void init() {
         setEntity(EntityType.HERBIVORE);
-        totalNum++;
         this.hitPoint = MAXHP;
+        allH.add(this);
+        this.moved = false;
     }
    
     /**
@@ -23,7 +28,7 @@ public class Herbivore extends Entity{
      * resets hitPoint
      * @param plant
      */
-    public void eatPlant(Cell cell, Plant plant) {
+    public void eatPlant(Cell cell) {
         cell.removePlant();
         resetHp();
     }
@@ -41,11 +46,115 @@ public class Herbivore extends Entity{
     public int getHp() {
         return this.hitPoint;
     }
-    /**
-     * Moves the Herbivore one cell
-     * Eats plant if cell has a plant
-     */
-    public void move(Cell c) {
-        updateLocation(c);
+    
+//    /**
+//     * Moves the herbivore to a new cell, prioritizes plants over empty cell
+//     */
+//    public void setLocation(Cell c) {
+//        this.setLocation(c);
+//    }
+    
+    public static Herbivore[] getAllHerbivores() {
+        return allH.toArray(new Herbivore[allH.size()]);
     }
+    
+    public static void removeFromAllHerbs(Herbivore h) {
+        allH.remove(h);
+    }
+    
+    /**
+    * Moves the Entity
+    * @param e     to a new Cell
+    * @param c
+    */
+   private void move(Cell oldC, Cell newC) {
+       oldC.removeHerbivore();
+       this.setLocation(newC);
+       newC.insertEntity(this);
+   }
+   
+   public void setMoved(boolean b) {
+       this.moved = b;
+   }
+   
+   /**
+    * Given adjacent cells
+    */
+   public void moveHerbivore() {
+       //Grabbing adj cells, put in 
+       Cell[] adjCells = this.getEntityCell().getAdjacentCells(1);
+       Cell[] validCs = new Cell[adjCells.length];
+       Cell newCell = null;
+       int validCInd = 0;
+       for (Cell cell : adjCells) {
+           if (cell == null) {
+               break;
+           }
+           //if this adj cell has an herbivore
+           if(cell.getHerbivore() != null) {
+               continue;
+           }
+           else {
+               validCs[validCInd] = cell;
+               validCInd++;
+           }
+       }
+       //RandomGenerator implementation of a random cell to move into
+       if (validCInd > 0) {
+           if (validCInd == 1) {
+               newCell = validCs[0];
+           } else {
+               newCell = getPriorityCell(validCs, EntityType.PLANT, validCInd);
+           }
+           move(this.getEntityCell(), newCell);
+           eatPlant(newCell);
+       }
+   }
+   
+   /**
+    * Selects a Cell of the prioritized EntityType, if exists
+    * @param cells
+    * @param et
+    * @param size
+    * @return
+    */
+   private Cell getPriorityCell(Cell[] cells, EntityType et, int size) {
+       int pInd = 0, otherInd = 0;
+       Cell [] pCells = new Cell[size], otherCells = new Cell[size];
+       for (Cell c : cells) {
+           if (c == null) {
+               break;
+           } else if (c.getEntity(et) != null) {
+               pCells[pInd] = c;
+               pInd++;
+           } else {
+               otherCells[otherInd] = c;
+               otherInd++;
+           }
+       }
+       return selectPriority(pCells, pInd, otherCells, otherInd);
+   }
+   
+   /**
+    * Helper method for getPriorityCell.
+    * @param pCells
+    * @param pInd
+    * @param otherCells
+    * @param oInd
+    * @return
+    */
+   private Cell selectPriority(Cell[] pCells, int pInd, 
+           Cell[] otherCells, int oInd) {
+       Cell priority = null;
+       if(pInd > 0) {
+           
+               priority = pCells[RandomGenerator.nextNumber(pInd)];
+           
+       } else if (oInd > 0){
+           
+               priority = otherCells[RandomGenerator.nextNumber(oInd)];
+           
+       }
+       return priority;
+   }
 }
