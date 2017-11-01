@@ -88,9 +88,9 @@ public class Cell extends JPanel {
         int currCol = this.locationPoint.getCol();
         System.out.println("Getting adjacent cells");
         for(int i = currRow - radius; i <= currRow + radius; i++) {
-            if (i < 0 || i >= world.COLUMNS) {continue;}
+            if (i < 0 || i >= world.getColumnCount()) {continue;}
             for (int j = currCol - radius; j <= currCol + radius; j++) {
-                if (j < 0 || j >= world.ROWS) {continue;}
+                if (j < 0 || j >= world.getRowCount()) {continue;}
                 if (i == currRow && j == currCol) {continue;}
                 grabbedCells[grabbedIndex] = world.getCellAt(i, j);
                 grabbedIndex++;
@@ -212,11 +212,11 @@ public class Cell extends JPanel {
     }
     
     /**
-     * Removes an Entity object reference in this Cell's entities array
+     * Removes an Entity object reference in this Cell's entities array.
      * with given EntityType.
      * @param et
      */
-    private void removeEntity(EntityType et) {
+    protected void removeEntity(EntityType et) {
         for (Iterator<Entity> iterator = entities.iterator(); iterator.hasNext();) {
             Entity en = iterator.next();
             if (en.getEntityType() == et) {
@@ -224,12 +224,8 @@ public class Cell extends JPanel {
                 iterator.remove();
             }
         }
-//        
-//        for (Entity e : entities) {
-//            if(e.getEntityType() == et)
-//                entities.remove(e);
-//        }
     }
+    
     /**
      * Removes this Cell's Plant Entity reference.
      */

@@ -4,17 +4,29 @@ import java.awt.GridLayout;
 import javax.swing.JFrame;
 
 /**
- * .
+ * Creates a GameFrame displaying the world in which GOL is situated.
  * @author Jacky
- *
+ * @version 1.0a
  */
 public class GameFrame extends JFrame {
+    /**
+     * Version.
+     */
+    private static final long serialVersionUID = 1L;
+    
     private final World world;
 
+    /**
+     * Constructor for this GameFrame, ahereing to a new world.
+     * @param w the world this GameFrame is referencing.
+     */
     public GameFrame(final World w) {
         world = w;
     }
-
+    
+    /**
+     * Initializes the GameFrame.
+     */
     public void init() {
         setTitle("Assignment 2a");
         setLayout(new GridLayout(world.getRowCount(), world.getColumnCount()));
@@ -27,7 +39,6 @@ public class GameFrame extends JFrame {
         addMouseListener(new TurnListener(this));
     }
     
-    
     /**
      * Calls world.takeTurn(), let it update, repaint the Frame.
      */
@@ -35,8 +46,8 @@ public class GameFrame extends JFrame {
         System.out.println("before world turn");
         world.takeTurn();
         System.out.println("after world turned");
-        for(Cell cells[]: world.getCells()) {
-            for(Cell cell: cells) {
+        for (Cell[] cells: world.getCells()) {
+            for (Cell cell: cells) {
                 cell.repaint();
             }
         }
