@@ -77,7 +77,7 @@ public class World {
     }
     
     /**
-     * gets an Array of Cells to be Seeded.
+     * Gets an Array of Cells to be Seeded.
      * @return Array of Cells to be Seeded.
      */
     private Cell[] getCellsToSeed() {
@@ -96,7 +96,7 @@ public class World {
                     if (seedables != null) {
                         Cell newCell = seedables
                                 [RandomGenerator.nextNumber(seedables.length)];
-                        newCell.setSeededStatus(true);
+                        //newCell.setSeededStatus(true);
                         retCells[retIndex] = newCell;
                         retIndex++;
                     }
