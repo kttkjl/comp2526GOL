@@ -63,16 +63,12 @@ public class World {
      */
     public void takeTurn() {
         //Removes dead Herbivores from this World object.
-        System.out.println("removing dead herbivores");
         removeDeadHerbivores();
-        System.out.println("finished moving dead herbs");
         
         //Seeding Phase
         seedCells();
-        System.out.println("Finished seeding cells");
         
         //All herbivores take a turn.
-        System.out.println("moving herbivores");
         herbivoreTakeTurn();
         herbivoreResetMove();
 
@@ -156,7 +152,6 @@ public class World {
         Herbivore[] herbs = Herbivore.getAllHerbivores();
         for (Herbivore h: herbs) {
             if (h.isDead()) {
-                System.out.println("HP below 10 detected");
                 //removes the Cell's ref to the Herbivore object
                 h.getEntityCell().removeHerbivore();
                 //remove this herbivore from the static all herbivore list

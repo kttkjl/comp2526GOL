@@ -104,7 +104,6 @@ public class Cell extends JPanel {
         Cell[] grabbedCells = new Cell[totalAdjCells];
         int currRow = this.locationPoint.getRow();
         int currCol = this.locationPoint.getCol();
-        System.out.println("Getting adjacent cells");
         for (int i = currRow - radius; i <= currRow + radius; i++) {
             if (i < 0 || i >= world.getColumnCount()) {
                 continue;
@@ -120,8 +119,6 @@ public class Cell extends JPanel {
                 grabbedIndex++;
             }
         }
-        System.out.println("returning adjacent cells of: " + "row:"
-                + currRow + " col: " + currCol);
         return grabbedCells;
     }
 
@@ -137,7 +134,6 @@ public class Cell extends JPanel {
         int adjEmpty = 0;
         int adjPlants = 0;
         int validCellIndex = 0;
-        System.out.println("chkForSeedCells variables set");
         // Goes through all the adjacent cells
         for (Cell cell : cells) {
             if (cell == null) {
@@ -153,16 +149,12 @@ public class Cell extends JPanel {
                 adjPlants++;
             }
         }
-        System.out.println("finished checking valid seed cells");
         // If the checked cell is valid, return a random cell to be seeded
         if (adjEmpty >= MIN_EMPTY_REQ && adjPlants >= MIN_PLANT_REQ 
                 && validCellIndex > 0) {
-            System.out.println("Found cell available to be seeded");
-            System.out.println("Returning valid cells to be seeded next turn");
             // trims this
             Cell[] validcells2 = new Cell[validCellIndex];
             System.arraycopy(validcells, 0, validcells2, 0, validCellIndex);
-            System.out.println("validcells2 length " + validcells2.length);
             return validcells2;
         }
         return null;

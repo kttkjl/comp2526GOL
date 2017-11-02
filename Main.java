@@ -20,7 +20,7 @@ public final class Main {
         final World world;
 
         RandomGenerator.reset();
-        world = new World(25, 25);
+        world = new World(150, 150);
         world.init();
         frame = new GameFrame(world);
         position(frame);
