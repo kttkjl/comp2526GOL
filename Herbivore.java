@@ -9,7 +9,7 @@ import java.util.ArrayList;
  */
 public class Herbivore extends Entity {
     private static ArrayList<Herbivore> allH = new ArrayList<Herbivore>();
-    private static int totalNum = allH.size();
+    private static int totalNum;
     private static final int MAXHP = 10;
     private static final int DECREMENT = 1;
     private int hitPoint;
@@ -22,13 +22,14 @@ public class Herbivore extends Entity {
      */
     public Herbivore(Cell cell) {
         super(cell);
+        setEntity(EntityType.HERBIVORE);
+        totalNum++;
     }
     
     /**
-     * Sets the background to Yellow.
+     * Inits the Herbivore object.
      */
     public void init() {
-        setEntity(EntityType.HERBIVORE);
         this.hitPoint = MAXHP;
         allH.add(this);
         this.moved = false;
@@ -39,8 +40,10 @@ public class Herbivore extends Entity {
      * @param cell the cell to remove the Plant object from.
      */
     public void eatPlant(Cell cell) {
-        if (cell.getPlant() != null) {
+        Plant p = cell.getPlant();
+        if (p != null) {
             cell.removePlant();
+            p.removeFromAllPlants();
             resetHp();
         }
     }

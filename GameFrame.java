@@ -2,6 +2,7 @@ package ca.bcit.comp2526.a2a;
 
 import java.awt.GridLayout;
 import javax.swing.JFrame;
+//import javax.swing.JLabel;
 
 /**
  * Creates a GameFrame displaying the world in which GOL is situated.
@@ -13,11 +14,16 @@ public class GameFrame extends JFrame {
      * Version.
      */
     private static final long serialVersionUID = 1L;
-    
     private final World world;
+//    private String text = Herbivore.countTotalAlive() + "";
+//    JLabel label = new JLabel() {
+//        public void setText(String text) {
+//            super.setText(text);
+//        }
+//    };
 
     /**
-     * Constructor for this GameFrame, ahereing to a new world.
+     * Constructor for this GameFrame, adhereing to a new world.
      * @param w the world this GameFrame is referencing.
      */
     public GameFrame(final World w) {
@@ -37,6 +43,8 @@ public class GameFrame extends JFrame {
             }
         }
         addMouseListener(new TurnListener(this));
+//        label.setText(text);
+//        add(label);
     }
     
     /**
@@ -45,6 +53,8 @@ public class GameFrame extends JFrame {
     public void takeTurn() {
         System.out.println("before world turn");
         world.takeTurn();
+//        text = Herbivore.countTotalAlive() + "";
+//        label.setText(text);
         System.out.println("after world turned");
         for (Cell[] cells: world.getCells()) {
             for (Cell cell: cells) {
@@ -52,5 +62,6 @@ public class GameFrame extends JFrame {
             }
         }
         System.out.println("repainted");
+        
     }
 }

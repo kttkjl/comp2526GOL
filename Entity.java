@@ -1,5 +1,10 @@
 package ca.bcit.comp2526.a2a;
 
+/**
+ * A Master class of Object that resides in a Cell Object in a World.
+ * @author Jacky
+ * @version 1.0a
+ */
 public class Entity {
     private Cell location;
     //Add more as needed.
@@ -16,13 +21,14 @@ public class Entity {
     
     /**
      * Sets the entityType of this Entity.
-     * @param en
+     * @param en the EntityType to set this Entity
      */
     public void setEntity(EntityType en) {
         this.entityType = en;
     }
 
     /**
+     * Gets the EntityType of this Entity.
      * @return the entityType
      */
     public EntityType getEntityType() {
@@ -30,6 +36,7 @@ public class Entity {
     }
     
     /**
+     * Returns the Cell where this Entity is located.
      * @return where this entity is located, in a Cell object
      */
     public Cell getEntityCell() {
@@ -38,16 +45,16 @@ public class Entity {
     
     /**
      * Sets the cell this entity is located in.
-     * @param c
+     * @param c the Cell this Entity is going to reside in.
      */
     public void setLocation(Cell c) {
         location = c;
     }
     
     /**
-    * Moves the Entity
-    * @param e     to a new Cell
-    * @param c
+    * Moves the Entity.
+    * @param oldC     reference to the old Cell
+    * @param newC     reference to the new Cell
     */
    protected void move(Cell oldC, Cell newC) {
        oldC.removeHerbivore();

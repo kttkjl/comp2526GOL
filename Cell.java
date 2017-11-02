@@ -53,12 +53,6 @@ public class Cell extends JPanel {
             Herbivore newHerbivore = new Herbivore(this);
             newHerbivore.init();
             entities.add(newHerbivore);
-
-            /*
-             * Insert into world's array of Herbivore locations and updates
-             * worldHerbivoreindex;
-             */
-
         } else if (rn >= PLANT_RATIO) {
             Plant newPlant = new Plant(this);
             newPlant.init();
@@ -133,14 +127,13 @@ public class Cell extends JPanel {
 
     /**
      * Finds if adjacent cells are valid for seeding, given an array of cells.
-     * 
+     * Returns an array of valid cells to be seeded, else return null.
      * @param cells
      *            the adjacent cells
-     * @return the Cell to be seeded
+     * @return the valid Cells to be seeded, else null
      */
     public Cell[] getSeedCells(Cell[] cells) {
         Cell[] validcells = new Cell[cells.length];
-        Plant p;
         int adjEmpty = 0;
         int adjPlants = 0;
         int validCellIndex = 0;
@@ -150,15 +143,12 @@ public class Cell extends JPanel {
             if (cell == null) {
                 break;
             }
-            p = cell.getPlant();
+            Plant p = cell.getPlant();
             // If it's an empty cell
             if (entityEmpty(cell.entities)) {
                 adjEmpty++;
-                if ((p != null) && (!p.justSeeded())) {
-                    // ONLY ADD to valid seed spots IF this cell isn't seeded
-                    validcells[validCellIndex] = cell;
-                    validCellIndex++;
-                }
+                validcells[validCellIndex] = cell;
+                validCellIndex++;
             } else if (p != null) {
                 adjPlants++;
             }
@@ -182,9 +172,8 @@ public class Cell extends JPanel {
      * Seeds a Plant object in this Cell, resets alreadySeeded Status.
      */
     public void seedCell() {
-        System.out.println("inside seedCell");
         Plant p = new Plant(this);
-        p.init();
+//        p.init();
         this.insertEntity(p);
     }
 

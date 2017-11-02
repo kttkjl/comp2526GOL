@@ -1,14 +1,16 @@
 package ca.bcit.comp2526.a2a;
 
+import java.util.ArrayList;
+
 /**
  * Creates a world which hosts Cells.
  * @author Jacky
  * @version 1.0a
  */
 public class World {
+    private final int rows;
+    private final int columns;
     private Cell[][] cells;
-
-    private final int ROWS, COLUMNS;
     
     /**
      * Constructs the world.
@@ -20,8 +22,8 @@ public class World {
      */
     public World(int rows, int cols) {
         super();
-        this.ROWS = rows;
-        this.COLUMNS = cols;
+        this.rows = rows;
+        this.columns = cols;
         this.cells = new Cell[rows][cols];
     }
     
@@ -34,8 +36,8 @@ public class World {
      *          30% chance = Plant
      */
     public void init() {
-        for (int row = 0; row < this.ROWS; row++) {
-            for (int col = 0; col < this.COLUMNS; col++) {
+        for (int row = 0; row < this.rows; row++) {
+            for (int col = 0; col < this.columns; col++) {
                 Cell newCreatedCell = new Cell(this, row, col);
                 newCreatedCell.init();
                 this.cells[row][col] = newCreatedCell;
@@ -66,7 +68,7 @@ public class World {
         System.out.println("finished moving dead herbs");
         
         //Seeding Phase
-        seedCells(getCellsToSeed());
+        seedCells();
         System.out.println("Finished seeding cells");
         
         //All herbivores take a turn.
@@ -77,47 +79,74 @@ public class World {
     }
     
     /**
-     * Gets an Array of Cells to be Seeded.
-     * @return Array of Cells to be Seeded.
+     * Seeds all the Cells in the world.
      */
-    private Cell[] getCellsToSeed() {
-        //Loop through all cells in the world
-        int retIndex = 0;
-        Cell[] retCells = new Cell[ROWS * COLUMNS];
-        for (int row = 0; row < this.ROWS; row++) {
-            for (int col = 0; col < this.COLUMNS; col++) {
-                //Grabs each Cell, put as workingCell.
-                Cell workingCell = getCellAt(col, row);  
-                if (workingCell.getPlant() != null) {
-                    System.out.println("Curr cell plant, "
-                            + "check for seedable adjs");
-                    Cell[] seedables = workingCell.getSeedCells(
-                            workingCell.getAdjacentCells(1));
-                    if (seedables != null) {
-                        Cell newCell = seedables
-                                [RandomGenerator.nextNumber(seedables.length)];
-                        //newCell.setSeededStatus(true);
-                        retCells[retIndex] = newCell;
-                        retIndex++;
-                    }
-                    System.out.println("finished getCellsToSeed");
+    private void seedCells() {
+        ArrayList<Plant> newPlants = new ArrayList<Plant>();
+        Plant[] plants = Plant.getAllPlants();
+        for (Plant plant : plants) {
+            if (!plant.justSeeded()) {
+                Cell c = plant.getEntityCell();
+                Cell[] cs = c.getSeedCells(c.getAdjacentCells(1));
+                if (cs != null) {
+                    c = cs[RandomGenerator.nextNumber(cs.length)];
+                    c.seedCell();
+                    newPlants.add(c.getPlant());
                 }
             }
         }
-        return retCells;
-    }
-    
-    /**
-     * Seeds the cells given.
-     * @param givenCells the cells to be seeded
-     */
-    private void seedCells(Cell[] givenCells) {
-        for (Cell cell : givenCells) {
-            if (cell != null) {
-                cell.seedCell();
+        for (Plant p : newPlants) {
+            if (p != null) {
+                p.init();
             }
         }
     }
+    
+    
+//    /**
+//     * Gets an Array of Cells to be Seeded.
+//     * @return Array of Cells to be Seeded.
+//     */
+//    private Cell[] getCellsToSeed() {
+//        //Loop through all cells in the world
+//        int retIndex = 0;
+//        Cell[] retCells = new Cell[rows * columns];
+//        for (int row = 0; row < this.rows; row++) {
+//            for (int col = 0; col < this.columns; col++) {
+//                //Grabs each Cell, put as workingCell.
+//                Cell workingCell = getCellAt(col, row);
+//                Plant p = workingCell.getPlant();
+//                
+//                if ((p !=  null) && (!p.justSeeded())) {
+//                    System.out.println("Curr cell plant, "
+//                            + "check for seedable adjs");
+//                    Cell[] seedables = workingCell.getSeedCells(
+//                            workingCell.getAdjacentCells(1));
+//                    if (seedables != null) {
+//                        Cell newCell = seedables[RandomGenerator.nextNumber(
+//                              seedables.length)];
+//                        newCell.setSeededStatus(true);
+//                        retCells[retIndex] = newCell;
+//                        retIndex++;
+//                    }
+//                    System.out.println("finished getCellsToSeed");
+//                }
+//            }
+//        }
+//        return retCells;
+//    }
+//    
+//    /**
+//     * Seeds the cells given.
+//     * @param givenCells the cells to be seeded
+//     */
+//    private void seedCells(Cell[] givenCells) {
+//        for (Cell cell : givenCells) {
+//            if (cell != null) {
+//                cell.seedCell();
+//            }
+//        }
+//    }
     
     /**
      * Set a Cell's reference to a Herbivore to null if Herbivore is dead.
@@ -143,7 +172,7 @@ public class World {
         Herbivore[] herbs = Herbivore.getAllHerbivores();
         for (Herbivore h : herbs) {
             //Moves all Herbivore, eat Plant if exists. 
-            if(!h.haveMoved()) {
+            if (!h.haveMoved()) {
                 h.eatPlant(h.moveHerbivore());
             }
             //Whack
@@ -151,6 +180,9 @@ public class World {
         }
     }
     
+    /**
+     * Resets all Herbivores in the world to not moved.
+     */
     private void herbivoreResetMove() {
         Herbivore[] herbs = Herbivore.getAllHerbivores();
         for (Herbivore h : herbs) {
@@ -163,7 +195,7 @@ public class World {
      * @return INT the x-max of the world.
      */
     public int getRowCount() {
-        return this.ROWS;
+        return this.rows;
     }
     
     /**
@@ -171,7 +203,7 @@ public class World {
      * @return INT the y-max of the world
      */
     public int getColumnCount() {
-        return this.COLUMNS;
+        return this.columns;
     }
     
     /**
