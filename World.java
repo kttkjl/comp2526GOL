@@ -70,8 +70,6 @@ public class World {
         
         //All herbivores take a turn.
         herbivoreTakeTurn();
-        herbivoreResetMove();
-
     }
     
     /**
@@ -168,18 +166,12 @@ public class World {
         for (Herbivore h : herbs) {
             //Moves all Herbivore, eat Plant if exists. 
             if (!h.haveMoved()) {
-                h.eatPlant(h.moveHerbivore());
+                h.move();
+                h.eatPlant();
             }
             //Whack
             h.minusHitPoint();
         }
-    }
-    
-    /**
-     * Resets all Herbivores in the world to not moved.
-     */
-    private void herbivoreResetMove() {
-        Herbivore[] herbs = Herbivore.getAllHerbivores();
         for (Herbivore h : herbs) {
             h.setMoved(false);
         }

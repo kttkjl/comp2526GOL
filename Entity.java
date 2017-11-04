@@ -56,10 +56,10 @@ public class Entity {
     * @param oldC     reference to the old Cell
     * @param newC     reference to the new Cell
     */
-   protected void move(Cell oldC, Cell newC) {
-       oldC.removeHerbivore();
+    protected void move(Cell oldC, Cell newC) {
+       oldC.removeEntity(entityType);
        this.setLocation(newC);
        newC.insertEntity(this);
-   }
+    }
 
 }

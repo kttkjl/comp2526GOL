@@ -37,9 +37,9 @@ public class Herbivore extends Entity {
     
     /**
      * Removes a given cell's reference to a Plant object. resets hitPoint.
-     * @param cell the cell to remove the Plant object from.
      */
-    public void eatPlant(Cell cell) {
+    public void eatPlant() {
+        Cell cell = this.getEntityCell();
         Plant p = cell.getPlant();
         if (p != null) {
             cell.removePlant();
@@ -109,7 +109,7 @@ public class Herbivore extends Entity {
      * Moves the herbivore, returns the new Cell the herbivore moved to.
      * @return the Cell the herbivore is moving into
      */
-    public Cell moveHerbivore() {
+    public Cell move() {
         // Grabbing adj cells, put in
         Cell[] adjCells = this.getEntityCell().getAdjacentCells(1);
         Cell[] validCs = new Cell[adjCells.length];
@@ -133,7 +133,7 @@ public class Herbivore extends Entity {
             } else {
                 newCell = getPriorityCell(validCs, EntityType.PLANT, validCInd);
             }
-            move(this.getEntityCell(), newCell);
+            super.move(getEntityCell(), newCell);
             setMoved(true);
         }
         return newCell;
