@@ -1,6 +1,6 @@
 package ca.bcit.comp2526.a2a;
 
-import java.util.ArrayList;
+import java.awt.Color;
 
 /**
  * a Plant object that resides inside a Cell. 
@@ -8,10 +8,11 @@ import java.util.ArrayList;
  * @author Jacky
  * @version 1.0b
  */
-public class Plant extends Entity {
-    private static ArrayList<Plant> allP = new ArrayList<Plant>();
-    private static int totalNum;
-    private boolean justSeeded = true;
+public class Plant extends LifeForm implements HerbivoreEdible, OmnivoreEdible {
+    
+    private static final int PARTNERREQ = 2;
+    private static final int EMPTYREQ = 3;
+    private static final int FOODREQ = 0;
     
     /**
      * Creates a Plant Object.
@@ -19,49 +20,56 @@ public class Plant extends Entity {
      */
     public Plant(Cell cell) {
         super(cell);
-        setEntity(EntityType.PLANT);
-        totalNum++;
     }
     
     /**
      * Sets that this Plant is not just seeded.
-     * @return the newly created Plant object
      */
-    public Plant init() {
-        allP.add(this);
-        this.justSeeded = false;
-        return this;
+    public void init() {
+        this.setHitPoint(1);
+        this.setColor(Color.GREEN);
+        this.setEntityType(EntityType.PLANT);
+        this.setTurnTaken(true);
     }
     
     /**
-     * Determines if this Plant object is just created.
-     * @return true if Plant newly seeded.
+     * Takes a turn for this plant.
      */
-    public boolean justSeeded() {
-        return this.justSeeded;
+    public void takeTurn() {
+        if (!isTurnTaken()) {
+            reproduce();
+            this.setTurnTaken(true);
+        }
     }
-    
+
     /**
-     * Removes this herbivore from index of herbivores.
+     * Plant moves, doesn't move.
      */
-    public void removeFromAllPlants() {
-        allP.remove(this);
-        totalNum--;
+    public void move() {
+        
     }
-    
-    /**
-     * Grabs all Plants.
-     * @return an array of all Plants
-     */
-    public static Plant[] getAllPlants() {
-        return allP.toArray(new Plant[allP.size()]);
+
+    @Override
+    boolean isFood(Entity e) {
+        // Nothing is food for Plant, so far, leave empty.
+        return false;
     }
-    
-    /**
-     * Returns the total amount of Plants.
-     * @return total amount of Plants.
-     */
-    public static int getTotalNum() {
-        return totalNum;
+
+    @Override
+    void giveBirth(int eCount, int tCount, int fCount, Cell[] eCells) {
+        if ((eCount >= EMPTYREQ) && (fCount >= FOODREQ) 
+                && (tCount >= PARTNERREQ)) {
+            Cell tc = eCells[RandomGenerator.nextNumber(eCount)];
+            Plant p = new Plant(tc);
+            p.init();
+            tc.setEntity(p);
+//            System.out.println("PlantBirth");
+        }
+    }
+
+    @Override
+    void resetLife() {
+        // We assume plant have infinite life here, 
+        // takeTurn() is also overridden.
     }
 }

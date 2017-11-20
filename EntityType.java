@@ -18,5 +18,13 @@ public enum EntityType {
     /**
      * Herbivore Entity.
      */
-    HERBIVORE
+    HERBIVORE,
+    /**
+     * Carnivore Entity.
+     */
+    CARNIVORE,
+    /**
+     * Omnivore Entity.
+     */
+    OMNIVORE
 }

@@ -11,6 +11,7 @@ public class World {
     private final int rows;
     private final int columns;
     private Cell[][] cells;
+    private int turn;
     
     /**
      * Constructs the world.
@@ -25,6 +26,15 @@ public class World {
         this.rows = rows;
         this.columns = cols;
         this.cells = new Cell[rows][cols];
+        this.turn = 0;
+    }
+    
+    /**
+     * Returns the current turn the world is in.
+     * @return the current turn.
+     */
+    public int getTurn() {
+        return this.turn;
     }
     
     /**
@@ -41,6 +51,10 @@ public class World {
                 Cell newCreatedCell = new Cell(this, row, col);
                 newCreatedCell.init();
                 this.cells[row][col] = newCreatedCell;
+                Entity newEnt = newCreatedCell.getEntity();
+                if (newEnt != null) {
+                    newEnt.setTurnTaken(false);
+                }
             }
         }
     }
@@ -56,125 +70,45 @@ public class World {
     }
     
     /**
-     * Removes dead herbivores.
-     * Checks plant cond. for growth.
-     * Moves all living Herbivores 1 cell randomly.
-     *      Eat plant if plant cell.
+     * World takes a turn.
      */
     public void takeTurn() {
-        //Removes dead Herbivores from this World object.
-        removeDeadHerbivores();
-        
-        //Seeding Phase
-        seedCells();
-        
-        //All herbivores take a turn.
-        herbivoreTakeTurn();
-    }
-    
-    /**
-     * Seeds all the Cells in the world.
-     */
-    private void seedCells() {
-        ArrayList<Plant> newPlants = new ArrayList<Plant>();
-        Plant[] plants = Plant.getAllPlants();
-        for (Plant plant : plants) {
-            if (!plant.justSeeded()) {
-                Cell c = plant.getEntityCell();
-                Cell[] cs = c.getSeedCells(c.getAdjacentCells(1));
-                if (cs != null) {
-                    c = cs[RandomGenerator.nextNumber(cs.length)];
-                    c.seedCell();
-                    newPlants.add(c.getPlant());
+        ArrayList<Entity> ents = new ArrayList<Entity>();
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < columns; c++) {
+                Cell cell = cells[r][c];
+                Entity cellEnt = cell.getEntity();
+                if (cellEnt != null) {
+                    //Resets the turnTaken boolean
+                    cellEnt.setTurnTaken(false);
+                    //Checks if entity is dead
+                    if (!((LifeForm) cellEnt).checkDead()) {
+                        ents.add(cellEnt);
+                    } else {
+                        //If entity is dead, remove it
+                        cellEnt.getLocation().removeEntity();
+                    }
                 }
             }
         }
-        for (Plant p : newPlants) {
-            if (p != null) {
-                p.init();
-            }
-        }
-    }
-    
-    
-//    /**
-//     * Gets an Array of Cells to be Seeded.
-//     * @return Array of Cells to be Seeded.
-//     */
-//    private Cell[] getCellsToSeed() {
-//        //Loop through all cells in the world
-//        int retIndex = 0;
-//        Cell[] retCells = new Cell[rows * columns];
-//        for (int row = 0; row < this.rows; row++) {
-//            for (int col = 0; col < this.columns; col++) {
-//                //Grabs each Cell, put as workingCell.
-//                Cell workingCell = getCellAt(col, row);
-//                Plant p = workingCell.getPlant();
-//                
-//                if ((p !=  null) && (!p.justSeeded())) {
-//                    System.out.println("Curr cell plant, "
-//                            + "check for seedable adjs");
-//                    Cell[] seedables = workingCell.getSeedCells(
-//                            workingCell.getAdjacentCells(1));
-//                    if (seedables != null) {
-//                        Cell newCell = seedables[RandomGenerator.nextNumber(
-//                              seedables.length)];
-//                        newCell.setSeededStatus(true);
-//                        retCells[retIndex] = newCell;
-//                        retIndex++;
-//                    }
-//                    System.out.println("finished getCellsToSeed");
-//                }
-//            }
-//        }
-//        return retCells;
-//    }
-//    
-//    /**
-//     * Seeds the cells given.
-//     * @param givenCells the cells to be seeded
-//     */
-//    private void seedCells(Cell[] givenCells) {
-//        for (Cell cell : givenCells) {
-//            if (cell != null) {
-//                cell.seedCell();
-//            }
-//        }
-//    }
-    
-    /**
-     * Set a Cell's reference to a Herbivore to null if Herbivore is dead.
-     * updates the world's cellsContHerbivore
-     */
-    public void removeDeadHerbivores() {
-        Herbivore[] herbs = Herbivore.getAllHerbivores();
-        for (Herbivore h: herbs) {
-            if (h.isDead()) {
-                //removes the Cell's ref to the Herbivore object
-                h.getEntityCell().removeHerbivore();
-                //remove this herbivore from the static all herbivore list
-                h.removeFromAllHerbs();
-            }
-        }
+        update(ents, EntityType.PLANT);
+        update(ents, EntityType.CARNIVORE);
+        update(ents, EntityType.OMNIVORE);
+        update(ents, EntityType.HERBIVORE);
     }
     
     /**
-     * Takes care of this world's Herbivores.
+     * Given ArrayList and EntityType, the Entity takes turn.
+     * @param al - given ArrayList of Entities.
+     * @param en - EntityType to take turn in.
      */
-    private void herbivoreTakeTurn() {
-        Herbivore[] herbs = Herbivore.getAllHerbivores();
-        for (Herbivore h : herbs) {
-            //Moves all Herbivore, eat Plant if exists. 
-            if (!h.haveMoved()) {
-                h.move();
-                h.eatPlant();
+    private void update(ArrayList<Entity> al, EntityType en) {
+        for (Entity a : al) {
+            //This checks for the EntityType AND that the entity is valid
+            if ((a.getEntityType() == en) && (a.getLocation() != null)) {
+                a.takeTurn();
             }
-            //Whack
-            h.minusHitPoint();
-        }
-        for (Herbivore h : herbs) {
-            h.setMoved(false);
-        }
+        } 
     }
     
     /**
